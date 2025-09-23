@@ -18,7 +18,7 @@ from app.routers.menu import router as menu_router
 
 app = FastAPI(title="Alkhalifa backend update")
 
-# Base.metadata.drop_all(bind=engine)
+#Base.metadata.drop_all(bind=engine)
 
 Base.metadata.create_all(bind=engine)
 
