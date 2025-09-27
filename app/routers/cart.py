@@ -98,3 +98,22 @@ async def delete_cart_item(
     db.delete(cart_item)
     db.commit()
     return {"message": "Cart item deleted successfully"}
+
+# ---------- Delete Cart Item by product id ----------
+@router.delete("/product/{product_id}", status_code=status.HTTP_200_OK)
+async def delete_cart_item(
+    product_id: int,
+    db: Session = Depends(get_db),
+    user: dict = Depends(get_user_info)
+):
+    user_id = user["user_id"]
+    cart_item = db.query(CartModel).filter(
+        (CartModel.product_id == product_id) & (CartModel.user_id == user_id)
+    ).first()
+
+    if not cart_item:
+        raise HTTPException(status_code=404, detail="Cart item not found")
+
+    db.delete(cart_item)
+    db.commit()
+    return {"message": "Cart item deleted successfully"}
