@@ -27,7 +27,7 @@ load_dotenv()
 app = FastAPI(title="Alkhalifa backend v:1.1.0")
 
 
-Base.metadata.drop_all(bind=engine)
+#Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 # Static files
