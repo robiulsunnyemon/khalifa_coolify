@@ -10,11 +10,12 @@ from app.models.cart import CartModel
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
+from sqlalchemy import and_
 
-# Create Order
 @router.post("/", response_model=OrderResponse, status_code=status.HTTP_201_CREATED)
-def create_order(order_data: OrderCreate, db: Session = Depends(get_db),user: dict = Depends(get_user_info)):
+def create_order(order_data: OrderCreate, db: Session = Depends(get_db), user: dict = Depends(get_user_info)):
     user_id = user["user_id"]
+
     new_order = OrderModel(
         user_id=user_id,
         total_amount=order_data.total_amount,
@@ -25,25 +26,25 @@ def create_order(order_data: OrderCreate, db: Session = Depends(get_db),user: di
     db.commit()
     db.refresh(new_order)
 
-
     for item in order_data.order_items:
         order_item = OrderItemModel(
-            user_id=order_data.user_id,
+            user_id=user_id,  # fixed
             order_id=new_order.id,
             food_id=item.food_id,
         )
         db.add(order_item)
 
         cart_item = db.query(CartModel).filter(
-            (CartModel.product_id == item.food_id) & (CartModel.user_id == user_id)
+            and_(CartModel.product_id == item.food_id, CartModel.user_id == user_id)
         ).first()
-        db.delete(cart_item)
-
+        if cart_item:
+            db.delete(cart_item)
 
     db.commit()
     db.refresh(new_order)
 
     return new_order
+
 
 
 # Get all orders
