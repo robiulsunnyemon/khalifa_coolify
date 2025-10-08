@@ -6,6 +6,7 @@ from app.models.order import OrderModel
 from app.models.order_item import OrderItemModel
 from app.schemas.order import OrderCreate, OrderResponse
 from app.utils.user_info import get_user_info
+from app.models.cart import CartModel
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
@@ -32,6 +33,12 @@ def create_order(order_data: OrderCreate, db: Session = Depends(get_db),user: di
             food_id=item.food_id,
         )
         db.add(order_item)
+
+        cart_item = db.query(CartModel).filter(
+            (CartModel.product_id == item.food_id) & (CartModel.user_id == user_id)
+        ).first()
+        db.delete(cart_item)
+
 
     db.commit()
     db.refresh(new_order)
