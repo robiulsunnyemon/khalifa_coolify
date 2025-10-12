@@ -47,6 +47,7 @@ class OrderCreate(OrderBase):
 
 class OrderResponse(OrderBase):
     id: int
+    status:str
     created_at: datetime
     updated_at: datetime
     order_items: List[OrderItemResponse] = []
