@@ -88,7 +88,7 @@ async def get_all_categories(db: Session = Depends(get_db)):
 
 
 # ---------- Get single ----------
-@router.get("/{category_id}", response_model=FoodCategoryResponse,status_code=status.HTTP_200_OK)
+@router.get("/{category_id}", response_model=CategoryResponseWithFood,status_code=status.HTTP_200_OK)
 async def get_category(category_id: int, db: Session = Depends(get_db)):
     category = db.query(FoodCategoryModel).filter(FoodCategoryModel.id == category_id).first()
     if not category:
