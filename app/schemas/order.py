@@ -45,11 +45,19 @@ class OrderCreate(OrderBase):
     order_items: List[OrderItemCreate]
 
 
+class User(BaseModel):
+    first_name:str
+    last_name:str
+    email:str
+
+
+
 class OrderResponse(OrderBase):
     id: int
     status:str
     created_at: datetime
     updated_at: datetime
+    user:Optional[User]=None
     order_items: List[OrderItemResponse] = []
 
     model_config = ConfigDict(from_attributes=True)

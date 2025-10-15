@@ -19,4 +19,9 @@ class OrderModel(Base):
         "OrderItemModel", back_populates="order", cascade="all, delete-orphan"
     )
 
+    user = relationship(
+        "UserModel",
+        back_populates="orders"
+    )
+
 

@@ -24,6 +24,7 @@
 
 # app/models/user.py
 from sqlalchemy import Column, String, Integer, Boolean, DateTime
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.db.db import Base
 
@@ -47,3 +48,10 @@ class UserModel(Base):
     auth_provider = Column(String, default="email")  # email / google
     create_time = Column(DateTime, server_default=func.now())
     update_time = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+    orders = relationship(
+        "OrderModel",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
