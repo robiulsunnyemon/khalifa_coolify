@@ -37,7 +37,8 @@ app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 origins = [
     "http://localhost",
     "http://localhost:8000",
-    "https://your-frontend-domain.com"
+    "https://khalifa.mtscorporate.com",
+    "*"
 ]
 
 app.add_middleware(
