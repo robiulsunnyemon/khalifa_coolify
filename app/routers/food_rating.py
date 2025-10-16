@@ -47,7 +47,7 @@ def get_food_rating(food_id: int, db: Session = Depends(get_db)):
     return db_food
 
 
-@router.get("/filter/popular",status_code=status.HTTP_200_OK)
+@router.get("/filter/popular", response_model=List[FoodRatingResponseForPopularFood],status_code=status.HTTP_200_OK)
 def get_popular_foods(db: Session = Depends(get_db)):
     popular_foods = db.query(FoodRatingModel).filter(FoodRatingModel.food_id > 4).all()
     if not popular_foods:

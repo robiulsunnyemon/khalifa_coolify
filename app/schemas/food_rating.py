@@ -1,6 +1,8 @@
 from pydantic import BaseModel,ConfigDict
 from typing import Optional,List
 
+from app.schemas.category_for_products import Product
+
 
 class FoodRatingCreate(BaseModel):
     food_id: int
@@ -29,8 +31,8 @@ class VariationOfFoodResponse(BaseModel):
 class FoodRatingResponseForPopularFood(BaseModel):
     food_id: int
     average_rating: float
-    food: Optional[FoodBase]
-    variation_of_food: Optional[VariationOfFoodResponse]
+    ##food: Optional[FoodBase]
+    food: List[Optional[Product]]=[]
 
 
     model_config = ConfigDict(from_attributes=True)
