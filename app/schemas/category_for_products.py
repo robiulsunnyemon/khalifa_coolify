@@ -16,6 +16,7 @@ class VariationOfFoodResponse(BaseModel):
 
 
 class Product(BaseModel):
+    id: int
     name: str
     description: Optional[str] = None
     food_image_url: Optional[str] = None
