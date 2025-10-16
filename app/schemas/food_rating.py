@@ -21,11 +21,16 @@ class FoodBase(BaseModel):
     price: float
     category_id: int
 
+class VariationOfFoodResponse(BaseModel):
+    name: Optional[str]
+    price: Optional[float]
+
 
 class FoodRatingResponseForPopularFood(BaseModel):
     food_id: int
     average_rating: float
     food: Optional[FoodBase]
+    variation_of_food: Optional[VariationOfFoodResponse]
 
 
     model_config = ConfigDict(from_attributes=True)
