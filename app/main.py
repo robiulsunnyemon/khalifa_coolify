@@ -34,9 +34,9 @@ app = FastAPI(title="Alkhalifa backend v:1.1.0")
 Base.metadata.create_all(bind=engine)
 
 
-OrderItemModel.__table__.drop(engine, checkfirst=True)
-PaymentHistoryModel.__table__.drop(engine, checkfirst=True)
-OrderModel.__table__.drop(engine, checkfirst=True)
+# OrderItemModel.__table__.drop(engine, checkfirst=True)
+# PaymentHistoryModel.__table__.drop(engine, checkfirst=True)
+# OrderModel.__table__.drop(engine, checkfirst=True)
 
 
 # Static files
