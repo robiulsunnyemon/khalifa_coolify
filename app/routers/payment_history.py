@@ -30,23 +30,42 @@ def get_payment_by_user_id(user_id: int, db: Session = Depends(get_db)):
 
 
 # Get Payment by  me
-@router.get("/me", response_model=List[PaymentResponse], status_code=status.HTTP_200_OK)
-def get_payment_by_user_token(user: dict = Depends(get_user_info), db: Session = Depends(get_db)):
-    user_id = 2
-    payments = db.query(PaymentHistoryModel).filter(PaymentHistoryModel.user_id == user_id).all()
-    if not payments:
-        raise HTTPException(status_code=404, detail="Payment not found")
-    return payments
 
+@router.get("/me", response_model=List[PaymentResponse], status_code=status.HTTP_200_OK)
+def get_payment_by_user_token(
+        user: dict = Depends(get_user_info),
+        db: Session = Depends(get_db)
+):
+    try:
+        user_id = user["user_id"]
+        payments = db.query(PaymentHistoryModel).filter(PaymentHistoryModel.user_id == user_id).all()
+
+        if not payments:
+            # Return empty list instead of 404 for no payments found
+            return []
+
+        return payments
+    except KeyError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid user token"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error retrieving payments: {str(e)}"
+        )
 
 
 # Get Payment by id
-@router.get("/{payment_id}",response_model=OrderResponse, status_code=status.HTTP_200_OK)
+@router.get("/{payment_id}", response_model=PaymentResponse, status_code=status.HTTP_200_OK)
 def get_payment_by_payment_id(payment_id: int, db: Session = Depends(get_db)):
     payment = db.query(PaymentHistoryModel).filter(PaymentHistoryModel.id == payment_id).first()
+
     if not payment:
-        raise HTTPException(status_code=404, detail="Payment not found")
-    order = db.query(OrderModel).filter(OrderModel.id ==payment.order_id).first()
-    if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
-    return order
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Payment with ID {payment_id} not found"
+        )
+
+    return payment
