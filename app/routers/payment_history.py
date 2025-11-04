@@ -30,9 +30,9 @@ def get_payment_by_user_id(user_id: int, db: Session = Depends(get_db)):
 
 
 # Get Payment by  me
-@router.get("/me",  status_code=status.HTTP_200_OK)
+@router.get("/me", response_model=List[PaymentResponse], status_code=status.HTTP_200_OK)
 def get_payment_by_user_token(user: dict = Depends(get_user_info), db: Session = Depends(get_db)):
-    user_id = user["user_id"]
+    user_id = 2
     payments = db.query(PaymentHistoryModel).filter(PaymentHistoryModel.user_id == user_id).all()
     if not payments:
         raise HTTPException(status_code=404, detail="Payment not found")
