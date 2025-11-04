@@ -4,6 +4,7 @@ from typing import List
 from app.db.db import get_db
 from app.models.order import OrderModel
 from app.models.order_item import OrderItemModel
+from app.models.payment_history import PaymentHistoryModel
 from app.schemas.order import OrderCreate, OrderResponse
 from app.utils.user_info import get_user_info
 from app.models.cart import CartModel
@@ -110,13 +111,20 @@ def delete_order(order_id: int, db: Session = Depends(get_db)):
     return {"message": "Order deleted successfully"}
 
 
-@router.put("/active/{order_id}", status_code=status.HTTP_200_OK)
+@router.put("/complete/{order_id}", status_code=status.HTTP_200_OK)
 def update_order_status_active(order_id: int, db: Session = Depends(get_db)):
     order = db.query(OrderModel).filter(OrderModel.id == order_id).first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
 
-    order.status = "Active"
+    order.status = "Complete"
+    payment_history = PaymentHistoryModel(
+        order_id=order_id,
+        total_amount=order.total_amount,
+        user_id=order.user_id,
+        trx_id="cash_on_delivery",
+    )
+    db.add(payment_history)
     db.commit()
     db.refresh(order)
-    return {"message": "Order status updated to Active"}
+    return {"message": "Order status updated to Complete"}
