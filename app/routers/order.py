@@ -22,6 +22,7 @@ def create_order(order_data: OrderCreate, db: Session = Depends(get_db), user: d
         total_amount=order_data.total_amount,
         delivery_address=order_data.delivery_address,
         delivery_full_address=order_data.delivery_full_address,
+        phone_number=order_data.phone_number,
     )
     db.add(new_order)
     db.commit()
