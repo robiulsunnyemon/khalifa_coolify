@@ -31,8 +31,8 @@ def get_payment_by_user_id(user_id: int, db: Session = Depends(get_db)):
 
 # Get Payment by  me
 
-@router.get("/me", response_model=List[PaymentResponse], status_code=status.HTTP_200_OK)
-def get_payment_by_user_token(
+@router.get("/user/me", response_model=List[PaymentResponse], status_code=status.HTTP_200_OK)
+def get_payment_history_by_user_token(
         user: dict = Depends(get_user_info),
         db: Session = Depends(get_db)
 ):
@@ -58,7 +58,7 @@ def get_payment_by_user_token(
 
 
 # Get Payment by id
-@router.get("/{payment_id}", response_model=PaymentResponse, status_code=status.HTTP_200_OK)
+@router.get("/user_payment/{payment_id}",response_model=OrderResponse, status_code=status.HTTP_200_OK)
 def get_payment_by_payment_id(payment_id: int, db: Session = Depends(get_db)):
     payment = db.query(PaymentHistoryModel).filter(PaymentHistoryModel.id == payment_id).first()
 
@@ -68,4 +68,7 @@ def get_payment_by_payment_id(payment_id: int, db: Session = Depends(get_db)):
             detail=f"Payment with ID {payment_id} not found"
         )
 
-    return payment
+    order = db.query(OrderModel).filter(OrderModel.id == payment.order_id).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    return order
