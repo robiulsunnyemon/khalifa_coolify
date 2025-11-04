@@ -14,6 +14,7 @@ class OrderModel(Base):
     status = Column(String,default="Pending")
     delivery_address = Column(String)
     delivery_full_address=Column(String)
+    phone_number = Column(String)
 
     order_items = relationship(
         "OrderItemModel", back_populates="order", cascade="all, delete-orphan"

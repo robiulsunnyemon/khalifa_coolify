@@ -37,6 +37,7 @@ class OrderItemResponse(BaseModel):
 # ---- Order Schemas ----
 class OrderBase(BaseModel):
     total_amount: float
+    phone_number:str
     delivery_address: str
     delivery_full_address: str
 

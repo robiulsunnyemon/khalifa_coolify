@@ -3,7 +3,7 @@ from app.schemas.send_otp import SendOtpModel
 
 conf=ConnectionConfig(
     MAIL_USERNAME="stewartbrown195111@gmail.com",
-    MAIL_PASSWORD= "bfjz ymce cksd adua",
+    MAIL_PASSWORD= "kcnp tzws oyqg ibgu",
     MAIL_FROM= "stewartbrown195111@gmail.com",
     MAIL_PORT=587,
     MAIL_SERVER="smtp.gmail.com",

@@ -5,6 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 from app.db.db import Base, engine
+from app.models.order import OrderModel
+from app.models.order_item import OrderItemModel
+from app.models.payment_history import PaymentHistoryModel
 from app.routers.user import router as user_router
 from app.routers.food_category import router as food_category_router
 from app.routers.food import router as food_router
@@ -29,6 +32,12 @@ app = FastAPI(title="Alkhalifa backend v:1.1.0")
 
 #Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
+
+
+OrderItemModel.__table__.drop(engine, checkfirst=True)
+PaymentHistoryModel.__table__.drop(engine, checkfirst=True)
+OrderModel.__table__.drop(engine, checkfirst=True)
+
 
 # Static files
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
@@ -59,14 +68,14 @@ async def root():
 # Include Routers
 app.include_router(user_router)
 app.include_router(food_category_router)
+app.include_router(food_router)
 app.include_router(cart_router)
 app.include_router(food_rating_router)
-app.include_router(order_router)
 app.include_router(search_router)
+app.include_router(order_router)
 app.include_router(payment_routers)
-app.include_router(food_router)
-app.include_router(notification_router)
 app.include_router(payment_history_router)
+app.include_router(notification_router)
 app.include_router(user_me_router)
 app.include_router(variation_of_food_router)
 app.include_router(menu_router)

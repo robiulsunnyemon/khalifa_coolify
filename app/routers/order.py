@@ -67,11 +67,23 @@ def get_order(order_id: int, db: Session = Depends(get_db)):
 def get_order( user: dict = Depends(get_user_info), db: Session = Depends(get_db)):
     user_id = user["user_id"]
     orders = db.query(OrderModel).filter(OrderModel.user_id == user_id).all()
-    if not orders:
-        raise HTTPException(status_code=404, detail="Order not found")
     return orders
 
 
+@router.get("/user/me/latest", response_model=OrderResponse, status_code=status.HTTP_200_OK)
+def get_latest_order(user: dict = Depends(get_user_info), db: Session = Depends(get_db)):
+    user_id = user["user_id"]
+    latest_order = (
+        db.query(OrderModel)
+        .filter(OrderModel.user_id == user_id)
+        .order_by(OrderModel.created_at.desc())  # অথবা .order_by(OrderModel.id.desc())
+        .first()
+    )
+
+    if not latest_order:
+        raise HTTPException(status_code=404, detail="No orders found for this user")
+
+    return latest_order
 
 
 # Get order by user_id
@@ -96,3 +108,15 @@ def delete_order(order_id: int, db: Session = Depends(get_db)):
     db.delete(order)
     db.commit()
     return {"message": "Order deleted successfully"}
+
+
+@router.put("/active/{order_id}", status_code=status.HTTP_200_OK)
+def update_order_status_active(order_id: int, db: Session = Depends(get_db)):
+    order = db.query(OrderModel).filter(OrderModel.id == order_id).first()
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    order.status = "Active"
+    db.commit()
+    db.refresh(order)
+    return {"message": "Order status updated to Active"}

@@ -75,8 +75,6 @@ async def get_cart_for_current_user(
 ):
     user_id = user["user_id"]
     cart_items = db.query(CartModel).filter(CartModel.user_id == user_id).all()
-    if not cart_items:
-        raise HTTPException(status_code=404, detail="Cart is empty")
     return cart_items
 
 
