@@ -17,6 +17,13 @@ from sqlalchemy import and_
 def create_order(order_data: OrderCreate, db: Session = Depends(get_db), user: dict = Depends(get_user_info)):
     user_id = user["user_id"]
 
+    db_order = db.query(OrderModel).filter(
+        OrderModel.user_id == user_id,
+        OrderModel.status == "Pending"
+    ).first()
+    if db_order:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,detail="Order already exists")
+
     new_order = OrderModel(
         user_id=user_id,
         total_amount=order_data.total_amount,
