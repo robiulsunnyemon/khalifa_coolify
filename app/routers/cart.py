@@ -31,7 +31,9 @@ async def add_or_update_cart(
         cart_item = CartModel(
             product_id=cart_product.product_id,
             quantity=cart_product.quantity,
-            user_id=user_id
+            user_id=user_id,
+            variation_id=cart_product.variation_id
+
         )
         db.add(cart_item)
 
@@ -115,3 +117,10 @@ async def delete_cart_item(
     db.delete(cart_item)
     db.commit()
     return {"message": "Cart item deleted successfully"}
+
+
+
+@router.get("/cart_all", status_code=status.HTTP_200_OK)
+async def get_all_cart_items(db: Session = Depends(get_db)):
+    carts_items = db.query(CartModel).all()
+    return carts_items

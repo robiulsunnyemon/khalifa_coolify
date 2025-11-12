@@ -8,8 +8,10 @@ class CartModel(Base):
     id = Column(Integer, primary_key=True,index=True)
     product_id = Column(Integer, ForeignKey("foods.id", ondelete="CASCADE"))
     quantity = Column(Integer,default=1)
+    variation_id = Column(Integer, ForeignKey("variation_of_foods.id"))
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, onupdate=func.now(),default=func.now())
 
     food=relationship("FoodModel", back_populates="cart")
+    variation = relationship("VariationOfFoodModel", back_populates="cart_items")

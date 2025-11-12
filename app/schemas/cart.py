@@ -4,7 +4,7 @@
 from pydantic import BaseModel,ConfigDict
 from typing import Optional
 from datetime import datetime
-
+from typing import List
 
 
 class CartBase(BaseModel):
@@ -15,6 +15,7 @@ class CartBase(BaseModel):
 
 class CartCreate(BaseModel):
     product_id: int
+    variation_id: int
     quantity: Optional[int] = 1
 
 
@@ -22,6 +23,11 @@ class CartCreate(BaseModel):
 class CartUpdate(BaseModel):
     quantity: Optional[int] = None
 
+
+class VariationOfFoodResponse(BaseModel):
+    id: int
+    name: Optional[str]
+    price: Optional[float]
 
 class Food(BaseModel):
     id: int
@@ -33,6 +39,7 @@ class Food(BaseModel):
 class CartResponse(CartBase):
     id: int
     food: Optional[Food] = None
+    variation: Optional[VariationOfFoodResponse] = None
     created_at: datetime
     updated_at: datetime
 

@@ -11,3 +11,4 @@ class VariationOfFoodModel(Base):
     food_id = Column(Integer, ForeignKey('foods.id',ondelete='CASCADE'))
 
     food = relationship("FoodModel",back_populates="variations")
+    cart_items = relationship("CartModel", back_populates="variation", cascade="all, delete")
