@@ -6,7 +6,7 @@ from typing import Optional, List
 class FoodBase(BaseModel):
     name: str
     description: Optional[str] = None
-    food_image_url:str  ##Optional[str] = None
+    food_image_url: Optional[str] = None
     price: float
     category_id: int
 
