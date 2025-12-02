@@ -6,7 +6,7 @@ from typing import Optional, List
 class FoodBase(BaseModel):
     name: str
     description: Optional[str] = None
-    food_image_url: Optional[str] = None
+    food_image_url:str  ##Optional[str] = None
     price: float
     category_id: int
 
@@ -15,7 +15,7 @@ class FoodCreate(BaseModel):
     description: Optional[str] = None
     price: float
     category_id: int
-    food_image_url: Optional[str] = "https://cdn.pixabay.com/photo/2022/02/08/02/56/shipping-7000647_1280.png"
+    food_image_url: str ##Optional[str] = "https://cdn.pixabay.com/photo/2022/02/08/02/56/shipping-7000647_1280.png"
 
 class FoodUpdate(BaseModel):
     name: Optional[str] = None

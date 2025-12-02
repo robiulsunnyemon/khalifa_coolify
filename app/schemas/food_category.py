@@ -12,7 +12,7 @@ class FoodCategoryCreate(BaseModel):
 class FoodCategoryUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
-    category_image_url: Optional[str] = None
+    category_image_url: str ##Optional[str] = None
 
 
 
