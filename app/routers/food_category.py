@@ -33,6 +33,8 @@ async def create_food_category(
         image: UploadFile = None,
         db: Session = Depends(get_db)
 ):
+    if image is None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Please select valid image")
     image_url = None
     if image and image.filename:
 
