@@ -41,7 +41,7 @@ async def create_food(
             f.write(await image.read())
 
         base_url = str(request.base_url)
-        image_url = f"{base_url}uploads/food/{unique_filename}"
+        image_url = f"uploads/food/{unique_filename}"
 
     db_food = FoodModel(
         name=name,
