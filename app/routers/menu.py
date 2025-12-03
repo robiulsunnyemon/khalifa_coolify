@@ -75,6 +75,12 @@ async def create_menus_bulk(menu_data: List[MenuCreate], db: Session = Depends(g
 @router.get("/", response_model=List[MenuOut], status_code=status.HTTP_200_OK)
 async def get_all_menus(db: Session = Depends(get_db)):
     menus = db.query(MenuModel).all()
+
+    # Convert \\n to \n for each menu item
+    for menu in menus:
+        if menu.menu_item_list:
+            menu.menu_item_list = menu.menu_item_list.replace("\\n", "\n")
+
     return menus
 
 
@@ -82,9 +88,16 @@ async def get_all_menus(db: Session = Depends(get_db)):
 @router.get("/{menu_id}", response_model=MenuOut, status_code=status.HTTP_200_OK)
 async def get_menu(menu_id: int, db: Session = Depends(get_db)):
     menu = db.query(MenuModel).filter(MenuModel.id == menu_id).first()
+
     if not menu:
         raise HTTPException(status_code=404, detail="Menu not found")
+
+    # Convert escaped newline \\n to real newline \n
+    if menu.menu_item_list:
+        menu.menu_item_list = menu.menu_item_list.replace("\\n", "\n")
+
     return menu
+
 
 
 # ---------- Update ----------
