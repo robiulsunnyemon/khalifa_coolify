@@ -115,3 +115,67 @@ async def delete_menu(menu_id: int, db: Session = Depends(get_db)):
     db.delete(menu)
     db.commit()
     return {"message": "Menu deleted successfully"}
+
+
+# ---------- Update Menu ----------
+@router.patch("/{menu_id}", response_model=MenuOut)
+async def update_menu(
+        menu_id: int,
+        request: Request,
+        name: str = Form(None),
+        price: float = Form(None),
+        menu_item_list: str = Form(None),
+        image: UploadFile = None,
+        db: Session = Depends(get_db),
+):
+    # Check if menu exists
+    db_menu = db.query(MenuModel).filter(MenuModel.id == menu_id).first()
+    if not db_menu:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Menu not found")
+
+    # Update basic fields if provided
+    update_data = {}
+    if name is not None:
+        update_data["name"] = name
+    if price is not None:
+        update_data["price"] = price
+    if menu_item_list is not None:
+        update_data["menu_item_list"] = menu_item_list
+
+    # Handle image update
+    if image:
+        if image.filename:  # New image provided
+            # Delete old image if exists and not default
+            if db_menu.menu_image and "picsum.photos" not in db_menu.menu_image:
+                # Extract filename from URL if it's our uploaded image
+                try:
+                    old_filename = db_menu.menu_image.split("/")[-1]
+                    old_file_path = os.path.join(UPLOAD_DIR, old_filename)
+                    if os.path.exists(old_file_path):
+                        os.remove(old_file_path)
+                except:
+                    pass  # If URL parsing fails, ignore
+
+            # Save new image
+            file_ext = image.filename.split(".")[-1]
+            unique_filename = f"{uuid.uuid4()}.{file_ext}"
+            file_path = os.path.join(UPLOAD_DIR, unique_filename)
+
+            with open(file_path, "wb") as f:
+                f.write(await image.read())
+
+            base_url = str(request.base_url).replace("http://", "https://")
+            update_data["menu_image"] = f"{base_url}uploads/menu/{unique_filename}"
+        else:
+            # If image is sent but empty, set to default
+            update_data["menu_image"] = "https://picsum.photos/100/100?random=5"
+
+    # Update the menu record
+    if update_data:
+        for key, value in update_data.items():
+            setattr(db_menu, key, value)
+
+        db.commit()
+        db.refresh(db_menu)
+
+    return db_menu
