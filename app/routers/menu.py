@@ -36,7 +36,7 @@ async def create_menu(
         with open(file_path, "wb") as f:
             f.write(await image.read())
 
-        base_url = str(request.base_url)
+        base_url = str(request.base_url).replace("http://", "https://")
         image_url = f"{base_url}uploads/menu/{unique_filename}"
 
     db_menu = MenuModel(
