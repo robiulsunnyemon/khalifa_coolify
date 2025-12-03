@@ -133,3 +133,69 @@ async def delete_category(category_id: int, db: Session = Depends(get_db)):
     db.delete(category)
     db.commit()
     return {"message": "Category deleted successfully"}
+
+
+# ---------- Update Category ----------
+@router.patch("/{category_id}", response_model=FoodCategoryResponse)
+async def update_food_category(
+        category_id: int,
+        request: Request,
+        name: str = Form(None),
+        description: str = Form(None),
+        image: UploadFile = None,
+        db: Session = Depends(get_db)
+):
+    # Check if category exists
+    db_category = db.query(FoodCategoryModel).filter(FoodCategoryModel.id == category_id).first()
+    if not db_category:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Food category not found")
+
+    # Update basic fields if provided
+    update_data = {}
+    if name is not None:
+        update_data["name"] = name
+    if description is not None:
+        update_data["description"] = description
+
+    # Handle image update
+    if image and image.filename:
+        # Delete old image if exists
+        if db_category.category_image_url:
+            # Extract filename from URL
+            old_filename = db_category.category_image_url.split("/")[-1]
+            old_file_path = os.path.join(UPLOAD_DIR, old_filename)
+            if os.path.exists(old_file_path):
+                os.remove(old_file_path)
+
+        # Save new image
+        file_ext = image.filename.split(".")[-1]
+        unique_filename = f"{uuid.uuid4()}.{file_ext}"
+        file_path = os.path.join(UPLOAD_DIR, unique_filename)
+
+        with open(file_path, "wb") as f:
+            f.write(await image.read())
+
+        base_url = str(request.base_url).replace("http://", "https://")
+        update_data["category_image_url"] = f"{base_url}uploads/category/{unique_filename}"
+    elif image is not None and image.filename == "":
+        # If empty file is sent, don't update image
+        pass
+    elif image is not None and not image.filename:
+        # If image field is sent but no file, remove existing image
+        if db_category.category_image_url:
+            # Extract filename from URL
+            old_filename = db_category.category_image_url.split("/")[-1]
+            old_file_path = os.path.join(UPLOAD_DIR, old_filename)
+            if os.path.exists(old_file_path):
+                os.remove(old_file_path)
+            update_data["category_image_url"] = None
+
+    # Update the category record
+    if update_data:
+        for key, value in update_data.items():
+            setattr(db_category, key, value)
+
+        db.commit()
+        db.refresh(db_category)
+
+    return db_category
