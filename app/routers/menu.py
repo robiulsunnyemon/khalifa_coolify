@@ -48,6 +48,7 @@ async def create_menu(
     db.add(db_menu)
     db.commit()
     db.refresh(db_menu)
+    db_menu.menu_item_list = db_menu.menu_item_list.replace("\\n", "\n")
     return db_menu
 
 
