@@ -4,6 +4,7 @@ from typing import List
 
 from app.db.db import get_db
 from app.models.cart import CartModel
+from app.models.variation_of_food import VariationOfFoodModel
 from app.schemas.cart import CartCreate, CartResponse
 from app.utils.user_info import get_user_info
 
@@ -19,6 +20,11 @@ async def add_or_update_cart(
     db: Session = Depends(get_db),
     user: dict = Depends(get_user_info)
 ):
+
+    db_variation=db.query(VariationOfFoodModel).filter(VariationOfFoodModel.id==cart_product.variation_id)
+    if db_variation is None:
+        raise  HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=f"Variation {cart_product.variation_id} is invalid")
+
     user_id = user["user_id"]
     cart_item = db.query(CartModel).filter(
         (CartModel.product_id == cart_product.product_id) &
