@@ -21,7 +21,7 @@ async def add_or_update_cart(
     user: dict = Depends(get_user_info)
 ):
 
-    db_variation=db.query(VariationOfFoodModel).filter(VariationOfFoodModel.id==cart_product.variation_id)
+    db_variation=db.query(VariationOfFoodModel).filter(VariationOfFoodModel.id==cart_product.variation_id).first()
     if db_variation is None:
         raise  HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail=f"Variation {cart_product.variation_id} is invalid")
 
