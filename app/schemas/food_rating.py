@@ -15,6 +15,7 @@ class FoodRatingResponse(BaseModel):
 
 
 class VariationOfFoodResponse(BaseModel):
+    id:int
     name: Optional[str]
     price: Optional[float]
 
