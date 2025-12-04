@@ -55,9 +55,12 @@ async def decrease_cart_item(
     db: Session = Depends(get_db),
     user: dict = Depends(get_user_info)
 ):
+
+
+
     user_id = user["user_id"]
     cart_item = db.query(CartModel).filter(
-        (CartModel.id == cart_id) & (CartModel.user_id == user_id)
+        (CartModel.id == cart_id) , (CartModel.user_id == user_id)
     ).first()
 
     if not cart_item:
