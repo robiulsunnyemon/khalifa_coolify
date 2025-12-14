@@ -11,6 +11,7 @@ class OrderItemBase(BaseModel):
 
 
 class Food(BaseModel):
+    id:int
     name: str
     description: Optional[str] = None
     food_image_url: Optional[str] = None
