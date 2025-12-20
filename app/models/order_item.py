@@ -9,6 +9,10 @@ class OrderItemModel(Base):
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     order_id = Column(Integer, ForeignKey("orders.id", ondelete="CASCADE"))
     food_id = Column(Integer, ForeignKey("foods.id", ondelete="CASCADE"))
+    variation_id=Column(Integer, ForeignKey("variation_of_foods.id", ondelete="CASCADE")) ##new add
+
 
     order = relationship("OrderModel", back_populates="order_items")
     food = relationship("FoodModel", back_populates="order_items")
+    variation= relationship("VariationOfFoodModel", back_populates="order_items")  ##new_add
+

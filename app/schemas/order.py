@@ -21,15 +21,22 @@ class Food(BaseModel):
 
 
 class OrderItemCreate(BaseModel):
+    variation_id:int  ##new_add
     food_id: int
 
 
+##new add
+class Variation(BaseModel):
+    id:int
+    name: Optional[str] =None
+    price: Optional[float] =None
 
 
 
 class OrderItemResponse(BaseModel):
     id: int
     food: Optional[Food] = None
+    variation:Optional[Variation]=None  ##new add
 
 
     model_config = ConfigDict(from_attributes=True)

@@ -12,3 +12,4 @@ class VariationOfFoodModel(Base):
 
     food = relationship("FoodModel",back_populates="variations")
     cart_items = relationship("CartModel", back_populates="variation", cascade="all, delete")
+    order_items = relationship("OrderItemModel", back_populates="variation", cascade="all, delete-orphan")  ##new add

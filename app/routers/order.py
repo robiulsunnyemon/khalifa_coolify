@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
+
+from sqlalchemy.testing import variation
+
 from app.db.db import get_db
 from app.models.order import OrderModel
 from app.models.order_item import OrderItemModel
@@ -40,6 +43,7 @@ def create_order(order_data: OrderCreate, db: Session = Depends(get_db), user: d
             user_id=user_id,  # fixed
             order_id=new_order.id,
             food_id=item.food_id,
+            variation_id=item.variation_id  ##new_add
         )
         db.add(order_item)
 
@@ -72,7 +76,8 @@ def get_order(order_id: int, db: Session = Depends(get_db)):
 
 
 # Get order by ID
-@router.get("/user/me", response_model=List[OrderResponse],status_code=status.HTTP_200_OK)
+##, response_model=List[OrderResponse]  new add
+@router.get("/user/me",status_code=status.HTTP_200_OK)
 def get_order( user: dict = Depends(get_user_info), db: Session = Depends(get_db)):
     user_id = user["user_id"]
     orders = db.query(OrderModel).filter(OrderModel.user_id == user_id).all()
