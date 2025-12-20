@@ -1,9 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-
-from sqlalchemy.testing import variation
-
 from app.db.db import get_db
 from app.models.order import OrderModel
 from app.models.order_item import OrderItemModel
@@ -11,10 +8,11 @@ from app.models.payment_history import PaymentHistoryModel
 from app.schemas.order import OrderCreate, OrderResponse
 from app.utils.user_info import get_user_info
 from app.models.cart import CartModel
+from sqlalchemy import and_
 
 router = APIRouter(prefix="/orders", tags=["Orders"])
 
-from sqlalchemy import and_
+
 
 @router.post("/", response_model=OrderResponse, status_code=status.HTTP_201_CREATED)
 def create_order(order_data: OrderCreate, db: Session = Depends(get_db), user: dict = Depends(get_user_info)):
