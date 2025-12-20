@@ -141,3 +141,23 @@ def update_order_status_active(order_id: int, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(order)
     return {"message": "Order status updated to Complete"}
+
+
+# Delete all orders
+@router.delete("/all/delete", status_code=status.HTTP_200_OK)
+def delete_all_orders(db: Session = Depends(get_db)):
+    try:
+        # প্রথমে OrderItemModel থেকে সব ডাটা ডিলিট করতে হবে কারণ এটি Foreign Key দিয়ে যুক্ত
+        db.query(OrderItemModel).delete()
+
+        # এরপর OrderModel ডিলিট করুন
+        num_deleted = db.query(OrderModel).delete()
+
+        db.commit()
+        return {"message": f"Successfully deleted {num_deleted} orders and their items."}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"An error occurred: {str(e)}"
+        )
