@@ -75,7 +75,7 @@ def get_order(order_id: int, db: Session = Depends(get_db)):
 
 # Get order by ID
 ##, response_model=List[OrderResponse]  new add
-@router.get("/user/me",status_code=status.HTTP_200_OK)
+@router.get("/user/me",response_model=List[OrderResponse],status_code=status.HTTP_200_OK)
 def get_order( user: dict = Depends(get_user_info), db: Session = Depends(get_db)):
     user_id = user["user_id"]
     orders = db.query(OrderModel).filter(OrderModel.user_id == user_id).all()
